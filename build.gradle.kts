@@ -27,8 +27,12 @@ dependencies {
 
 tasks.register<Jar>("buildLambda") {
     archiveFileName.set("lambda.jar")
-    from(sourceSets.main.get().output)
+    from(sourceSets.main.get().output) {
+        exclude("com/example/cdk/**")
+    }
     into("lib") {
-        from(configurations.runtimeClasspath)
+        from(configurations.runtimeClasspath.get().filter {
+            !it.name.contains("aws-cdk") && !it.name.contains("constructs")
+        })
     }
 }
