@@ -1,0 +1,4 @@
+{
+  "app": "gradlew.bat run --quiet",
+  "@aws-cdk/core:newStyleStackSynthesis": true
+}
