@@ -13,17 +13,10 @@ This project demonstrates:
 
 ## API Endpoint
 
-**POST** `/prod/` - Query RetroPie stats by emulator and/or game
+**GET** `/prod/stats?emulator=nes` - Query RetroPie stats by emulator
 
-**Request Body:**
-```json
-{
-  "emulator": "nes",
-  "game": "Joust (U)"
-}
-```
-
-Both fields are optional. Omit to return all records.
+**Query Parameters:**
+- `emulator` (optional) - Filter by emulator name (e.g., "nes", "snes")
 
 **Response:**
 ```json
@@ -64,8 +57,7 @@ java_lambda/
 │   ├── com/example/lambda/
 │   │   ├── RetroPieStatsHandler.java  # Lambda function code
 │   │   └── model/
-│   │       ├── RetroPieStats.java     # Data model
-│   │       └── FilterRequest.java     # Request model
+│   │       └── RetroPieStats.java     # Data model
 │   └── com/example/cdk/
 │       ├── LambdaApp.java             # CDK app entry point
 │       └── LambdaStack.java           # CDK stack definition
@@ -99,7 +91,7 @@ cdk destroy
 ## What Gets Deployed
 
 - AWS Lambda function running Java 21
-- API Gateway REST API with POST endpoint
+- API Gateway REST API with GET endpoint
 - IAM role with DynamoDB read permissions
 - CloudWatch Logs group for function logs
 
@@ -109,22 +101,8 @@ After deployment, CDK outputs the API URL. Test with:
 
 ```bash
 # Get all records
-curl -X POST https://<api-id>.execute-api.<region>.amazonaws.com/prod/ \
-  -H "Content-Type: application/json" \
-  -d '{}'
+curl https://<api-id>.execute-api.<region>.amazonaws.com/prod/stats
 
 # Filter by emulator
-curl -X POST https://<api-id>.execute-api.<region>.amazonaws.com/prod/ \
-  -H "Content-Type: application/json" \
-  -d '{"emulator": "nes"}'
-
-# Filter by game
-curl -X POST https://<api-id>.execute-api.<region>.amazonaws.com/prod/ \
-  -H "Content-Type: application/json" \
-  -d '{"game": "Joust (U)"}'
-
-# Filter by both
-curl -X POST https://<api-id>.execute-api.<region>.amazonaws.com/prod/ \
-  -H "Content-Type: application/json" \
-  -d '{"emulator": "nes", "game": "Joust (U)"}'
+curl https://<api-id>.execute-api.<region>.amazonaws.com/prod/stats?emulator=nes
 ```

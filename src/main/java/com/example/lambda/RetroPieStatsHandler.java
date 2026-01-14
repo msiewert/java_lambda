@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.example.lambda.model.FilterRequest;
 import com.example.lambda.model.RetroPieStats;
 import com.google.gson.Gson;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -23,28 +22,19 @@ public class RetroPieStatsHandler implements RequestHandler<APIGatewayProxyReque
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         try {
-            FilterRequest filter = gson.fromJson(request.getBody(), FilterRequest.class);
+            Map<String, String> queryParams = request.getQueryStringParameters();
+            String emulator = queryParams != null ? queryParams.get("emulator") : null;
             
             ScanRequest.Builder scanBuilder = ScanRequest.builder().tableName(tableName);
             
-            if (filter.getEmulator() != null || filter.getGame() != null) {
+            if (emulator != null) {
                 Map<String, String> expressionNames = new HashMap<>();
                 Map<String, AttributeValue> expressionValues = new HashMap<>();
-                List<String> conditions = new ArrayList<>();
                 
-                if (filter.getEmulator() != null) {
-                    expressionNames.put("#emulator", "emulator");
-                    expressionValues.put(":emulator", AttributeValue.builder().s(filter.getEmulator()).build());
-                    conditions.add("#emulator = :emulator");
-                }
+                expressionNames.put("#emulator", "emulator");
+                expressionValues.put(":emulator", AttributeValue.builder().s(emulator).build());
                 
-                if (filter.getGame() != null) {
-                    expressionNames.put("#game", "game");
-                    expressionValues.put(":game", AttributeValue.builder().s(filter.getGame()).build());
-                    conditions.add("#game = :game");
-                }
-                
-                scanBuilder.filterExpression(String.join(" AND ", conditions))
+                scanBuilder.filterExpression("#emulator = :emulator")
                           .expressionAttributeNames(expressionNames)
                           .expressionAttributeValues(expressionValues);
             }

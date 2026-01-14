@@ -3,7 +3,9 @@ package com.example.cdk;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
-import software.amazon.awscdk.services.apigateway.LambdaRestApi;
+import software.amazon.awscdk.services.apigateway.LambdaIntegration;
+import software.amazon.awscdk.services.apigateway.Resource;
+import software.amazon.awscdk.services.apigateway.RestApi;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.lambda.Code;
@@ -30,8 +32,8 @@ public class LambdaStack extends Stack {
 
         table.grantReadData(statsFunction);
 
-        LambdaRestApi.Builder.create(this, "RetroPieStatsApi")
-                .handler(statsFunction)
-                .build();
+        RestApi api = RestApi.Builder.create(this, "RetroPieStatsApi").build();
+        Resource stats = api.getRoot().addResource("stats");
+        stats.addMethod("GET", new LambdaIntegration(statsFunction));
     }
 }
