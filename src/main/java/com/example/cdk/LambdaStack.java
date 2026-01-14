@@ -11,6 +11,7 @@ import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.lambda.SnapStartConf;
 import software.constructs.Construct;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ public class LambdaStack extends Stack {
                 .handler("com.example.lambda.RetroPieStatsHandler::handleRequest")
                 .environment(Map.of("TABLE_NAME", table.getTableName()))
                 .timeout(Duration.seconds(90))
+                .snapStart(SnapStartConf.ON_PUBLISHED_VERSIONS)
                 .build();
 
         table.grantReadData(statsFunction);
