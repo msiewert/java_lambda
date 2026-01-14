@@ -21,6 +21,8 @@ dependencies {
     implementation("com.amazonaws:aws-lambda-java-events:3.11.3")
     implementation("software.amazon.awssdk:dynamodb:2.20.26")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("software.amazon.awscdk:aws-cdk-lib:2.114.1")
     implementation("software.constructs:constructs:10.3.0")
 }
